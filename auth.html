@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="assets/auth.css">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Login Page</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <form id="authForm" method="post">
+        <div>
+            <h2>WELCOME BACK!</h2>
+            <h3>Choose a role:</h3>
+            <input type="radio" id="ManagerRadio" value="Manager" name="role"> 
+            <label for="ManagerRadio"> MANAGER </label><br>
+            <input type="radio" id="CustomerRadio" value="user" name="role"> 
+            <label for="CustomerRadio"> CUSTOMER </label>
+        </div>
+
+        <div class="ManagerForm" style="display:none;">
+            <div class="Username">
+                <h3>Enter Username:</h3>
+                <input type="text" id="ManagerUsername" name="username" class="username">
+            </div>
+            <div class="password">
+                <h3>Enter Password:</h3>
+                <input type="password" id="ManagerPass" name="password" class="pass">
+            </div>
+            <button type="submit" onclick="setSelectedRole('Manager')">
+                <p>Log in</p>
+            </button>
+        </div>
+
+        <div class="CustomerForm" style="display:none;">
+            <div class="Username">
+                <h3>Enter Tracking ID:</h3>
+                <input type="text" id="CustomerUsername" class="username">
+            </div>
+            <button type="submit" onclick="setSelectedRole('Customer')">
+                <p>Track parcel</p>
+            </button>
+        </div>
+    </form>
+    <script>
+        const ManagerRadio = document.getElementById("ManagerRadio");
+        const CustomerRadio = document.getElementById("CustomerRadio");
+        const ManagerForm = document.querySelector(".ManagerForm");
+        const CustomerForm = document.querySelector(".CustomerForm");
+        const selectedRoleInput = document.getElementById("selectedRole");
+
+        ManagerRadio.addEventListener("change", () => {
+            ManagerForm.style.display = "block";
+            CustomerForm.style.display = "none";
+        });
+
+        CustomerRadio.addEventListener("change", () => {
+            ManagerForm.style.display = "none";
+            CustomerForm.style.display = "block";
+        });
+
+        function setSelectedRole(role) {
+            selectedRoleInput.value = role;
+        }
+    </script>
+</body>
+</html>
