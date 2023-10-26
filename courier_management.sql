@@ -28,9 +28,19 @@ CREATE TABLE `branch` (
   `branch_id` int(11) NOT NULL,
   `branch_addr` varchar(50) DEFAULT NULL,
   `branch_city` varchar(30) DEFAULT NULL,
-  `branch_phone` int(10) DEFAULT NULL
+  `branch_phone` bigint DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+INSERT INTO `branch` VALUES (1, '12A Gandhi Road', 'Mumbai', 9123456789),
+(2, '34B Nehru Street', 'Delhi', 9898765432),
+(3, '56C Tagore Avenue', 'Kolkata', 3344556677),
+(4, '78D Patel Lane', 'Ahmedabad', 7878787878),
+(5, '90E Rajendra Path', 'Chennai', 7676767676),
+(6, '11F Malleshwaram', 'Bengaluru', 6767676767),
+(7, '23G Indira Place', 'Hyderabad', 2323232323),
+(8, '45H Bose Road', 'Pune', 8787878787),
+(9, '67I Sardar Marg', 'Jaipur', 5656565656),
+(10, '89J Jawahar Square', 'Lucknow', 9898989898);
 -- --------------------------------------------------------
 
 --
