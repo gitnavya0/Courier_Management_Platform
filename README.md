@@ -1,7 +1,9 @@
 # Courier_management_platform-
 third year DBMS project 
+no css  
 
 dependencies - 
+
 ```npm install express```
 
 ```npm install body-parser```
@@ -12,5 +14,3 @@ dependencies -
 
 ```npm install mysql2```
 
-
-no css added. 
