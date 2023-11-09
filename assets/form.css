@@ -1,0 +1,35 @@
+/* Add form styling */
+form {
+    width: 50%;
+    margin: 15px auto;
+    padding: 35px;
+    background-color: #f1f1f1;
+    border: 1px solid #333;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+form label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+form input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #333;
+}
+
+form button {
+    background-color: #333;
+    color: #f1f1f1;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+form button:hover {
+    background-color: #444;
+}

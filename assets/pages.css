@@ -1,0 +1,75 @@
+h1 {
+    font-size: 24px;
+    color: #333;
+    background-color: #f1f1f1;
+    padding: 10px;
+    margin: 0;
+    text-align: center;
+}
+
+/* Style the side navigation bar */
+.sidenav {
+    width: 250px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: #003a4f;
+    padding-top: 20px;
+}
+
+/* Style the navigation links */
+.sidenav a {
+    padding: 8px 8px 8px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #f1f1f1;
+    display: block;
+}
+
+/* Add a hover effect to the links */
+.sidenav a:hover {
+    background-color: #003a4f;
+}
+
+/* Style the dropdown button */
+.dropdown-btn {
+    padding: 8px 8px 8px 16px;
+    text-decoration: none;
+    font-size: 20px;
+    color: #f1f1f1;
+    display: block;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Style the dropdown content (hidden by default) */
+.dropdown-container {
+    display: none;
+    padding-left: 20px;
+    background-color: #003a4f;
+}
+
+/* Style the table */
+table {
+    margin-left: 270px;
+    /* Make space for the side navigation bar */
+    margin-top: 30px;
+    border-collapse: collapse;
+    width: 80%;
+}
+
+th,
+td {
+    border: 1px solid white;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #003a4f;
+    color: white;
+}
