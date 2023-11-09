@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
+    <title>List of all items arrived at destination</title>
+    <link rel="stylesheet" href="assets/pages.css">
+</head>
+<body>
+    <h1> List of all items arrived at destination </h1>
+    <div class="sidenav">
+        <a href="/home">Dashboard</a>
+        <button class="dropdown-btn">Branch 
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="/addnew_branch">Add new</a>
+            <a href="/list_branches">List</a>
+        </div>
+        <button class="dropdown-btn">Branch Staff 
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="/addnew_branchstaff">Add new</a>
+            <a href="/list_branchstaff">List</a>
+        </div>
+        <button class="dropdown-btn">Parcels 
+            <i class="fa fa-caret-down"></i>
+        </button>
+        <div class="dropdown-container">
+            <a href="/addnew_parcel.html">Add new</a>
+            <a href="/list_parcels">List all</a>
+            <a href="/items_accepted">Items accepted</a>
+            <a href="/list_collected">Collected</a>
+            <a href="/list_shipped">Shipped</a>
+            <a href="/list_intransit">In Transit</a>
+            <a href="/list_arrived">Arrived at destination</a>
+            <a href="/list_outfordeliver">Out for delivery</a>
+            <a href="/list_delivered">Delivered</a>
+        </div>
+        <a href="#">Report</a>
+    </div>
+</body>
+<script>
+    var dropdown = document.getElementsByClassName("dropdown-btn");
+    for (var i = 0; i < dropdown.length; i++) {
+        dropdown[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var dropdownContent = this.nextElementSibling;
+            if (dropdownContent.style.display === "block") {
+                dropdownContent.style.display = "none";
+            } else {
+                dropdownContent.style.display = "block";
+            }
+        });
+    }    
+</script>
+</html>
