@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <!-- <link rel="stylesheet" href="assets/auth.css"> -->
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Login Page</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        .form-section {
+            display: none;
+        }
+    </style>
 </head>
 <body>
     <form id="authForm" method="post" action="/">
@@ -19,39 +23,36 @@
             <label for="CustomerRadio"> CUSTOMER </label>
         </div>
 
-        <div class="ManagerForm" style="display:none;">
-            <form id="ManagerForm" method="post" action="/">
-                <div class="Username">
-                    <h3>Enter Username:</h3>
-                    <input type="text" id="ManagerUsername" name="username" class="username">
-                </div>
-                <div class="password">
-                    <h3>Enter Password:</h3>
-                    <input type="password" id="ManagerPass" name="password" class="pass">
-                </div>
-                <button type="submit">
-                    <p>Log in</p>
-                </button>
-            </form>
+        <div class="form-section" id="ManagerForm">
+            <div class="Username">
+                <h3>Enter Username:</h3>
+                <input type="text" id="ManagerUsername" name="username" class="username">
+            </div>
+            <div class="password">
+                <h3>Enter Password:</h3>
+                <input type="password" id="ManagerPass" name="password" class="pass">
+            </div>
+            <button type="submit">
+                <p>Log in</p>
+            </button>
         </div>
 
-        <div class="CustomerForm" style="display:none;">
-            <form id="CustomerForm" method="post" action="/">
-                <div class="Username">
-                    <h3>Enter Tracking ID:</h3>
-                    <input type="text" id="CustomerUsername" class="username">
-                </div>
-                <button type="submit">
-                    <p>Track parcel</p>
-                </button>
-            </form>
+        <div class="form-section" id="CustomerForm">
+            <div class="tackingID">
+                <h3>Enter Tracking ID:</h3>
+                <input type="text" id="trackingID" name="trackingID" class="trackingID">
+            </div>
+            <button type="submit">
+                <p>Track parcel</p>
+            </button>
         </div>
     </form>
+
     <script>
         const ManagerRadio = document.getElementById("ManagerRadio");
         const CustomerRadio = document.getElementById("CustomerRadio");
-        const ManagerForm = document.querySelector(".ManagerForm");
-        const CustomerForm = document.querySelector(".CustomerForm");
+        const ManagerForm = document.getElementById("ManagerForm");
+        const CustomerForm = document.getElementById("CustomerForm");
 
         ManagerRadio.addEventListener("change", () => {
             ManagerForm.style.display = "block";

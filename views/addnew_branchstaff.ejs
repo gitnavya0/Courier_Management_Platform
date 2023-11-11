@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <title>Add new Branch Staff</title>
     <link rel="stylesheet" href="assets/pages.css">
+    <link rel="stylesheet" href="assets/form.css">
 </head>
 <body>
     <h1> Add new Branch Staff </h1>
@@ -27,18 +28,27 @@
             <i class="fa fa-caret-down"></i>
         </button>
         <div class="dropdown-container">
-            <a href="/addnew_parcel.html">Add new</a>
+            <a href="/addnew_parcel">Add new</a>
             <a href="/list_parcels">List all</a>
-            <a href="/items_accepted">Items accepted</a>
-            <a href="/list_collected">Collected</a>
-            <a href="/list_shipped">Shipped</a>
-            <a href="/list_intransit">In Transit</a>
-            <a href="/list_arrived">Arrived at destination</a>
-            <a href="/list_outfordeliver">Out for delivery</a>
-            <a href="/list_delivered">Delivered</a>
         </div>
         <a href="#">Report</a>
     </div>
+
+    <form action="/addnew_branchstaff" method="post">
+        <label for="empName">Name Of employee:</label>
+        <input type="text" id="empName" name="empName" required>
+    
+        <label for="empPhone">Employee phone number:</label>
+        <input type="text" id="empPhone" name="empPhone" required>
+    
+        <label for="empBranch">Name of work branch:</label>
+        <select id="empBranch" name="empBranch" required>
+            <!-- Options will be populated dynamically using JavaScript -->
+        </select>
+    
+        <button type="submit">Submit</button>
+    </form>    
+
 </body>
 <script>
     var dropdown = document.getElementsByClassName("dropdown-btn");
@@ -52,6 +62,23 @@
                 dropdownContent.style.display = "block";
             }
         });
-    }    
+    }
+
+    fetch('/getBranchAddresses')
+        .then(response => response.json())
+        .then(branchAddresses => {
+            const empBranchSelect = document.getElementById('empBranch');
+
+            branchAddresses.forEach(branchAddr => {
+                const option = document.createElement('option');
+                option.value = branchAddr;
+                option.text = branchAddr;
+                empBranchSelect.appendChild(option);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching branch addresses: ' + error);
+        });
+
 </script>
 </html>
