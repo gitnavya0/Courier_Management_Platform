@@ -35,7 +35,7 @@ INSERT INTO `branch` VALUES ('12A Gandhi Road', 'Mumbai', 9123456789),
 ('34B Nehru Street', 'Delhi', 9898765432),
 ('56C Tagore Avenue', 'Kolkata', 3344556677),
 ('78D Patel Lane', 'Ahmedabad', 7878787878),
-( '90E Rajendra Path', 'Chennai', 7676767676),
+('90E Rajendra Path', 'Chennai', 7676767676),
 ('11F Malleshwaram', 'Bengaluru', 6767676767),
 ('23G Indira Place', 'Hyderabad', 2323232323),
 ('45H Bose Road', 'Pune', 8787878787),
@@ -48,7 +48,7 @@ INSERT INTO `branch` VALUES ('12A Gandhi Road', 'Mumbai', 9123456789),
 --
 
 CREATE TABLE `parcels` (
-  `parcel_id` int(11) NOT NULL,
+  `parcel_id` int NOT NULL AUTO_INCREMENT,
   `cost` int(11) DEFAULT NULL,
   `sender_id` int(11) DEFAULT NULL,
   `recv_name` varchar(20) DEFAULT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE `parcels` (
   `status` varchar(20) DEFAULT NULL,
   `emp_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+insert into parcels values(1, 345, 1, 'Naitik', '1232 Prestige Falcon', '2023-11-11 00:00:00', 'in-transit', 4);
 -- --------------------------------------------------------
 
 --
@@ -65,7 +65,7 @@ CREATE TABLE `parcels` (
 --
 
 CREATE TABLE `parcels_details` (
-  `parcel_id` int(11) NOT NULL,
+  `parcel_id` int NOT NULL AUTO_INCREMENT,
   `cost` int(11) DEFAULT NULL,
   `weight` float DEFAULT NULL,
   `length` float DEFAULT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE `receiver` (
   `recv_name` varchar(20) NOT NULL,
   `recv_addr` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+insert into receiver values('Naitik', '1232 Prestige Falcon');
 -- --------------------------------------------------------
 
 --
@@ -92,11 +92,11 @@ CREATE TABLE `receiver` (
 --
 
 CREATE TABLE `sender` (
-  `sender_id` int(11) NOT NULL,
+  `sender_id` int NOT NULL AUTO_INCREMENT,
   `sender_name` varchar(20) DEFAULT NULL,
   `sender_addr` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+insert into sender values (1, 'Navya', 'aqua 2 grande exotica indore');
 -- --------------------------------------------------------
 
 --
@@ -104,11 +104,11 @@ CREATE TABLE `sender` (
 --
 
 CREATE TABLE `sends` (
-  `sender_id` int(11) NOT NULL,
+  `sender_id` int NOT NULL AUTO_INCREMENT,
   `recv_addr` varchar(50) NOT NULL,
   `recv_name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
+insert into sends values(1,'1232 Prestige Falcon', 'Naitik');
 -- --------------------------------------------------------
 
 --
@@ -116,7 +116,7 @@ CREATE TABLE `sends` (
 --
 
 CREATE TABLE `staff` (
-  `emp_id` int(11) NOT NULL,
+  `emp_id` int NOT NULL AUTO_INCREMENT,
   `emp_name` varchar(20) DEFAULT NULL,
   `emp_phone` int(10) DEFAULT NULL,
   `emp_branch_id` int(11) DEFAULT NULL
