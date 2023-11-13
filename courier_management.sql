@@ -59,6 +59,16 @@ CREATE TABLE `parcels` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert into parcels values(1, 345, 1, 'Naitik', '1232 Prestige Falcon', '2023-11-11 00:00:00', 'in-transit', 4);
 -- --------------------------------------------------------
+CREATE VIEW customer_parcel_view AS
+SELECT
+    p.parcel_id,
+    pd.type,
+    p.recv_name,
+    p.date_accepted,
+    p.cost,
+    p.status
+FROM parcels p
+JOIN parcels_details pd ON p.parcel_id = pd.parcel_id;
 
 --
 -- Table structure for table `parcels_details`
@@ -191,8 +201,7 @@ ALTER TABLE `parcels`
   ADD CONSTRAINT `parcels_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `sender` (`sender_id`),
   ADD CONSTRAINT `parcels_ibfk_2` FOREIGN KEY (`recv_name`) REFERENCES `receiver` (`recv_name`),
   ADD CONSTRAINT `parcels_ibfk_3` FOREIGN KEY (`emp_id`) REFERENCES `staff` (`emp_id`),
-  ADD CONSTRAINT `parcels_ibfk_4` FOREIGN KEY (`recv_addr`) REFERENCES `receiver` (`recv_addr`),
-  ADD CONSTRAINT `parcels_ibfk_5` FOREIGN KEY (`cost`) REFERENCES `parcels_details` (`cost`);
+  ADD CONSTRAINT `parcels_ibfk_4` FOREIGN KEY (`recv_addr`) REFERENCES `receiver` (`recv_addr`);
   
 --
 -- Constraints for table `parcels_details`

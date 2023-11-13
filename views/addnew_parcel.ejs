@@ -35,9 +35,40 @@
     </div>
 
     <form action="/addnew_parcel" method="post">
+
+        <label for="senderName">Sender's Name:</label>
+        <input type="text" id="senderName" name="senderName" required>
+        
+        <label for="senderAddress">Sender's Address:</label>
+        <input type="text" id="senderAddress" name="senderAddress" required>
+        
+        <label for="receiverName">Receiver's Name:</label>
+        <input type="text" id="receiverName" name="receiverName" required>
+        
+        <label for="receiverAddress">Receiver's Address:</label>
+        <input type="text" id="receiverAddress" name="receiverAddress" required>
+        
+        <label for="parcelCost">Cost:</label>
+        <input type="text" id="parcelCost" name="parcelCost" required>
+        
         <label for="parcelWeight">Weight:</label>
         <input type="text" id="parcelWeight" name="parcelWeight" required>
+
+        <label for="parcelLength">Length:</label>
+        <input type="text" id="parcelLength" name="parcelLength">
+        
+        <label for="parcelWidth">Width:</label>
+        <input type="text" id="parcelWidth" name="parcelWidth">
+        
+        <label for="parcelType">Type:</label>
+        <input type="text" id="parcelType" name="parcelType">
+        
+        <label for="parcelHeight">Height:</label>
+        <input type="text" id="parcelHeight" name="parcelHeight">
+        
+        <button type="submit">Submit</button>
     </form>
+    
 </body>
 <script>
     var dropdown = document.getElementsByClassName("dropdown-btn");

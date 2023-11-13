@@ -3,8 +3,8 @@ form {
     width: 50%;
     margin: 15px auto;
     padding: 35px;
-    background-color: #f1f1f1;
-    border: 1px solid #333;
+    background-color: #c0e1ff;
+    border: 1px solid #0074d9;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     text-align: center;
 }
@@ -18,11 +18,11 @@ form input {
     width: 100%;
     padding: 8px;
     margin-bottom: 10px;
-    border: 1px solid #333;
+    border: 1px solid #0074d9;
 }
 
 form button {
-    background-color: #333;
+    background-color: #0074d9;
     color: #f1f1f1;
     padding: 10px 20px;
     border: none;
@@ -31,5 +31,5 @@ form button {
 }
 
 form button:hover {
-    background-color: #444;
+    background-color: #0074d9;
 }

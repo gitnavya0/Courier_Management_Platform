@@ -41,7 +41,7 @@
             <th>Branch City</th>
             <th>Branch Phone</th>
           </tr>
-          <% branchData.forEach(branch => { %>
+          <% branchData.forEach(function(branch) { %>
             <tr>
               <td><%= branch.branch_id %></td>
               <td><%= branch.branch_addr %></td>

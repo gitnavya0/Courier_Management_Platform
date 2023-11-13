@@ -4,6 +4,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <title>List of all Branch Staff</title>
     <link rel="stylesheet" href="assets/pages.css">
+    <link rel="stylesheet" href="assets/table.css">
 </head>
 <body>
     <h1> List of all Branch Staff </h1>
@@ -32,6 +33,26 @@
         </div>
         <a href="#">Report</a>
     </div>
+
+    <table>
+        <tr>
+          <th>Employee ID</th>
+          <th>Employee Name</th>
+          <th>Employee Phone Number</th>
+          <th>Employee Branch ID</th>
+          <th>Employee Branch Address</th>
+        </tr>
+        <% staffData.forEach(function(staff) { %>
+          <tr>
+            <td><%= staff.emp_id %></td>
+            <td><%= staff.emp_name %></td>
+            <td><%= staff.emp_phone %></td>
+            <td><%= staff.emp_branch_id %></td>
+            <td><%= staff.branch_addr %></td>
+          </tr>
+        <% }); %>
+      </table>   
+
 </body>
 <script>
     var dropdown = document.getElementsByClassName("dropdown-btn");

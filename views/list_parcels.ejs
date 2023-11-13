@@ -4,6 +4,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css">
     <title>List of all parcels </title>
     <link rel="stylesheet" href="assets/pages.css">
+    <link rel="stylesheet" href="assets/table.css">
+    <link rel="stylesheet" href="assets/pop_up.css">
 </head>
 <body>
     <h1> List of all Parcels </h1>
@@ -32,6 +34,43 @@
         </div>
         <a href="#">Report</a>
     </div>
+    
+    <table>
+        <tr>
+            <th>Parcel ID</th>
+            <th>Type</th>
+            <th>Cost</th>
+            <th>Sender Name</th>
+            <th>Receiver Name</th>
+            <th>Date Accepted</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+        <% parcelData.forEach(function(parcel) { %>
+            <tr>
+                <td><%= parcel.parcel_id %></td>
+                <td><%= parcel.type %></td>
+                <td><%= parcel.cost %></td>
+                <td><%= parcel.sender_name %></td>
+                <td><%= parcel.receiver_name %></td>
+                <td><%= parcel.date_accepted %></td>
+                <td><%= parcel.status %></td>
+                <td>
+                    <button type="button" onclick="updateStatus('<%= parcel.parcel_id %>')" class="update"> Update Status </button>
+                    <button type="button" onclick="deleteParcel('<%= parcel.parcel_id %>')" class="delete"> Delete </button>
+                    <button type="button" onclick="viewDetails('<%= parcel.parcel_id %>')" class="details"> View Details </button>
+                </td>
+            </tr>
+        <% }); %>
+    </table>
+    <!--pop up window to display parcel details-->
+    <div class="popup-container" id="detailsPopup">
+        <div class="popup-content">
+            <h2>Parcel Details</h2>
+            <!-- shown dynamically using javascript -->
+        </div>
+    </div>
+    
 </body>
 <script>
     var dropdown = document.getElementsByClassName("dropdown-btn");
@@ -46,5 +85,51 @@
             }
         });
     }    
+    function viewDetails(parcelId) {
+        const popup = document.getElementById("detailsPopup");
+        if (popup) {
+            fetch(`/getParcelDetails/${parcelId}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        const popupContent = document.querySelector(".popup-content");
+                        popupContent.innerHTML = `
+                            <h2>Parcel Details</h2>
+                            <p>Parcel ID: ${data.parcel_id}</p>
+                            <p>Cost: ₹${data.cost}</p>
+                            <p>Type: ${data.type}</p>
+                            <p>Weight: ${data.weight} Kgs</p>
+                            <p>Length: ${data.length} inches</p>
+                            <p>Width: ${data.width} inches</p>
+                            <p>Height: ${data.height} inches</p>
+
+                            <button type="button" onclick="closePopup()" class="close-button">Close</button>`;
+                        popup.style.display = "block";
+
+                    }
+                })
+                .catch(error => console.error(error));
+        }
+    }
+
+    function closePopup() {
+        const popup = document.getElementById("detailsPopup");
+        if (popup) {
+            popup.style.display = "none";
+        }
+    }
+    function updateStatus(parcelId) {
+            fetch(`/updateParcelStatus/${parcelId}`, {
+                method: 'POST',
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        }
+
 </script>
 </html>

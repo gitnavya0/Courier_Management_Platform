@@ -1,0 +1,50 @@
+table {
+    width: 80%;
+    border-collapse: collapse;
+    margin-top: 30px;
+    margin-left: 270px;
+}
+
+th,
+td {
+    border: 1px solid #003a4f;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #003a4f;
+    color: white;
+}
+
+.sidenav {
+    padding-top: 50px;
+}
+
+button {
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+    margin-right: 5px;
+}
+
+button.update {
+    background-color: #007BFF;
+    color: white;
+}
+
+button.delete {
+    background-color: #DC3545;
+    color: white;
+}
+
+button.details {
+    background-color: #28A745;
+    color: white;
+}
+
+button:hover {
+    background-color: #555;
+}
