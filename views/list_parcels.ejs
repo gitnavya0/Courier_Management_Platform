@@ -34,7 +34,7 @@
         </div>
         <a href="#">Report</a>
     </div>
-    
+
     <table>
         <tr>
             <th>Parcel ID</th>
@@ -119,17 +119,24 @@
         }
     }
     function updateStatus(parcelId) {
-            fetch(`/updateParcelStatus/${parcelId}`, {
-                method: 'POST',
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data);
-                })
-                .catch(error => {
-                    console.error(error);
-                });
+    fetch(`/updateParcelStatus/${parcelId}`, {
+        method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data.success) {
+            alert('Status of parcel has been updated');
+            location.reload();  
+        } else {
+            alert('parcel already delivered');
         }
+    })
+    .catch(error => {
+        console.error(error);
+        alert('An error occurred while updating parcel status');
+    });
+}
 
 </script>
 </html>

@@ -149,10 +149,24 @@ app.get('/list_parcels', (req, res) => {
             console.error('Error querying the database: ' + error);
             res.status(500).send('Internal Server Error');
         } else {
-            res.render('list_parcels', { parcelData: results });
+            res.render('list_parcels', { parcelData: results, alertMessage: null });
         }
     });
 });
+
+app.post('/updateParcelStatus/:parcelId', (req, res) => {
+    const parcelId = req.params.parcelId;
+
+    connection.query('CALL UpdateParcelStatus(?)', [parcelId], (error) => {
+        if (error) {
+            console.error('Error updating parcel status:', error);
+            return res.status(500).json({ success: false });
+        }
+
+        return res.status(200).json({ success: true });
+    });
+});
+
 app.get('/getParcelDetails/:parcelId', (req, res) => {
     const parcelId = req.params.parcelId;
 
@@ -165,19 +179,6 @@ app.get('/getParcelDetails/:parcelId', (req, res) => {
         } else {
             res.json(results[0]);
         }
-    });
-});
-
-app.post('/updateParcelStatus/:parcelId', (req, res) => {
-    const parcelId = req.params.parcelId;
-
-    connection.query('CALL UpdateParcelStatus(?)', [parcelId], (error) => {
-        if (error) {
-            console.error('Error updating parcel status:', error);
-            return res.status(500).json({ message: 'Error updating parcel status' });
-        }
-
-        return res.status(200).json({ message: 'Parcel status updated successfully' });
     });
 });
 
