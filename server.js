@@ -27,17 +27,18 @@ app.post('/addnew_branch', (req, res) => {
     connection.query(sql, values, (err) => {
         if (err) {
             console.error('Error inserting data into the database: ' + err);
+            res.status(500).send('Internal Server Error');
         } else {
-            connection.query('SELECT (SELECT COUNT(*) FROM branch) AS branchCount, (SELECT COUNT(*) FROM staff) AS staffCount,(SELECT COUNT(*) FROM parcels) AS parcelCount', function (error, results) {
-                if (error) {
-                    console.error('Error querying the database: ' + error);
-                    res.status(500).send('Internal Server Error');
-                } else {
-                    const branchCount = results[0].branchCount;
-                    const staffCount = results[0].staffCount;
-                    const parcelCount = results[0].parcelCount;
-                    res.render('home', { branchCount, staffCount, parcelCount });
+            // Log the activity
+            const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
+            const activityValues = ['New Branch Added', `New branch added: ${branchAddr}, ${branchCity}, ${branchPhone}`];
+
+            connection.query(activitySql, activityValues, (activityErr) => {
+                if (activityErr) {
+                    console.error('Error logging activity: ' + activityErr);
                 }
+
+                res.redirect('/home');
             });
         }
     });
@@ -74,6 +75,7 @@ app.get('/getBranchAddresses', (req, res) => {
         }
     });
 });
+
 app.post('/addnew_branchstaff', (req, res) => {
     const { empName, empPhone, empBranch } = req.body;
 
@@ -93,21 +95,22 @@ app.post('/addnew_branchstaff', (req, res) => {
             if (err) {
                 console.error('Error inserting data into the database: ' + err);
             } else {
-                connection.query('SELECT (SELECT COUNT(*) FROM branch) AS branchCount, (SELECT COUNT(*) FROM staff) AS staffCount,(SELECT COUNT(*) FROM parcels) AS parcelCount', function (error, results) {
-                    if (error) {
-                        console.error('Error querying the database: ' + error);
-                        res.status(500).send('Internal Server Error');
-                    } else {
-                        const branchCount = results[0].branchCount;
-                        const staffCount = results[0].staffCount;
-                        const parcelCount = results[0].parcelCount;
-                        res.render('home', { branchCount, staffCount, parcelCount });
+                // Log the activity
+                const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
+                const activityValues = ['Staff Hired', `New staff member ${empName} added to branch ${empBranch}`];
+
+                connection.query(activitySql, activityValues, (activityErr) => {
+                    if (activityErr) {
+                        console.error('Error logging activity: ' + activityErr);
                     }
                 });
+
+                res.redirect('/home');
             }
         });
     });
 });
+
 
 app.get('/list_branchstaff', (req, res) => {
     const query = `
@@ -163,7 +166,16 @@ app.post('/updateParcelStatus/:parcelId', (req, res) => {
             return res.status(500).json({ success: false });
         }
 
-        return res.status(200).json({ success: true });
+        const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
+        const activityValues = ['Parcel Status Updated', `Parcel status updated for ID: ${parcelId}`];
+
+        connection.query(activitySql, activityValues, (activityErr) => {
+            if (activityErr) {
+                console.error('Error logging activity: ' + activityErr);
+            }
+
+            return res.status(200).json({ success: true });
+        });
     });
 });
 
@@ -222,17 +234,30 @@ app.post('/', function (req, res) {
 });
 
 app.get('/home', function (req, res) {
-    connection.query('SELECT (SELECT COUNT(*) FROM branch) AS branchCount, (SELECT COUNT(*) FROM staff) AS staffCount,(SELECT COUNT(*) FROM parcels) AS parcelCount', function (error, results) {
+    connection.query('SELECT * FROM count_table', function (error, results) {
         if (error) {
             console.error('Error querying the database: ' + error);
             res.status(500).send('Internal Server Error');
             return;
         }
-        const branchCount = results[0].branchCount;
-        const staffCount = results[0].staffCount;
-        const parcelCount = results[0].parcelCount;
 
-        res.render('home', { branchCount, staffCount, parcelCount });
+        // Fetch recent activities
+        connection.query('SELECT * FROM activity_log ORDER BY timestamp DESC LIMIT 3', function (activityError, activityResults) {
+            if (activityError) {
+                console.error('Error querying activity log: ' + activityError);
+                res.status(500).send('Internal Server Error');
+                return;
+            }
+
+            const counts = {};
+            results.forEach(row => {
+                counts[row.entity_name.toLowerCase()] = row.count_value;
+            });
+
+            const recentActivities = activityResults;
+
+            res.render('home', { counts, recentActivities });
+        });
     });
 });
 
@@ -251,7 +276,7 @@ app.post('/addnew_parcel', async (req, res) => {
                 return;
             }
 
-            // inserting data into receiver table 
+            // Insert data into receiver table 
             const insertRecvQuery = `INSERT INTO receiver (recv_name, recv_addr) VALUES (?, ?)`;
             const recvValues = [formData.receiverName, formData.receiverAddress];
 
@@ -262,8 +287,7 @@ app.post('/addnew_parcel', async (req, res) => {
                     return;
                 }
 
-                // Step 3: Fetch the sender_id from the sender table
-                // recv name and address from the receiver table 
+                // Fetch sender_id from the sender table
                 const senderId = senderResult.insertId;
                 const recvName = formData.receiverName;
                 const recvAddr = formData.receiverAddress;
@@ -278,25 +302,25 @@ app.post('/addnew_parcel', async (req, res) => {
                         return;
                     }
 
-                    // Step 5: Insert data into the parcels table with date, status, and emp_id
-                    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Get the current date and time in MySQL format
-                    const statusOptions = ['accepted', 'shipped', 'intransit', 'out for delivery', 'delivered'];
-
-                    // Query the staff table to get a list of emp_id values
+                    // Fetch emp_id from the staff table
                     const getEmployeeIdsQuery = 'SELECT emp_id FROM staff';
                     connection.query(getEmployeeIdsQuery, (err, employeeIds) => {
                         if (err) {
                             console.error(err);
-                            res.status(500).send('An error occurred while adding the selecting random id from emp .');
+                            res.status(500).send('An error occurred while adding the selecting random id from emp.');
                             return;
                         }
 
                         // Select a random emp_id from the list of available emp_id values
                         const randomEmpId = employeeIds[Math.floor(Math.random() * employeeIds.length)].emp_id;
 
+                        // Insert data into the parcels table with date, status, and emp_id
+                        const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+                        const statusOptions = ['accepted', 'shipped', 'intransit', 'out for delivery', 'delivered'];
+
                         const insertParcelsQuery = `
-                                INSERT INTO parcels (cost, sender_id, recv_name, recv_addr, date_accepted, status, emp_id)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                            INSERT INTO parcels (cost, sender_id, recv_name, recv_addr, date_accepted, status, emp_id)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
                         const parcelsValues = [
                             formData.parcelCost,
@@ -308,19 +332,21 @@ app.post('/addnew_parcel', async (req, res) => {
                             randomEmpId
                         ];
 
-                        // Execute the SQL query to insert data into the parcels table
                         connection.query(insertParcelsQuery, parcelsValues, (err, parcelsResult) => {
                             if (err) {
                                 console.error(err);
-                                res.status(500).send('An error occurred while adding the parcel in parcels table .');
+                                res.status(500).send('An error occurred while adding the parcel in parcels table.');
                                 return;
                             }
 
-                            // Get the parcel_id generated for the inserted parcel
+                            // Fetch parcel_id from the inserted parcel
                             const parcelId = parcelsResult.insertId;
 
-                            // Step 6: Insert data into the parcels_details table using the retrieved parcel_id
-                            const insertParcelsDetailsQuery = `INSERT INTO parcels_details (parcel_id, cost, weight, length, width, type, height) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                            // Insert data into the parcels_details table using the retrieved parcel_id
+                            const insertParcelsDetailsQuery = `
+                                INSERT INTO parcels_details (parcel_id, cost, weight, length, width, type, height)
+                                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
                             const parcelsDetailsValues = [
                                 parcelId,
                                 formData.parcelCost,
@@ -331,24 +357,23 @@ app.post('/addnew_parcel', async (req, res) => {
                                 formData.parcelHeight
                             ];
 
-                            // Execute the SQL query to insert data into the parcels_details table
                             connection.query(insertParcelsDetailsQuery, parcelsDetailsValues, (err, parcelsDetailsResult) => {
                                 if (err) {
                                     console.error(err);
-                                    res.status(500).send('An error occurred while adding the parcel.');
+                                    res.status(500).send('An error occurred while adding details to the parcels_details table.');
                                     return;
                                 }
 
-                                connection.query('SELECT (SELECT COUNT(*) FROM branch) AS branchCount, (SELECT COUNT(*) FROM staff) AS staffCount,(SELECT COUNT(*) FROM parcels) AS parcelCount', function (error, results) {
-                                    if (error) {
-                                        console.error('Error querying the database: ' + error);
-                                        res.status(500).send('Internal Server Error');
-                                    } else {
-                                        const branchCount = results[0].branchCount;
-                                        const staffCount = results[0].staffCount;
-                                        const parcelCount = results[0].parcelCount;
-                                        res.render('home', { branchCount, staffCount, parcelCount });
+                                // Log the activity
+                                const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
+                                const activityValues = ['New Parcel Added', `New parcel added with ID: ${parcelsResult.insertId}`];
+
+                                connection.query(activitySql, activityValues, (activityErr) => {
+                                    if (activityErr) {
+                                        console.error('Error logging activity: ' + activityErr);
                                     }
+
+                                    res.redirect('/home');
                                 });
                             });
                         });

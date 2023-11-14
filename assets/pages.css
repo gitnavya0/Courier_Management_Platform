@@ -73,3 +73,58 @@ th {
     background-color: #003a4f;
     color: white;
 }
+
+/* Style the footer */
+footer {
+    background-color: #0074d9;
+    color: white;
+    text-align: center;
+    padding: 1px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Style the GitHub link */
+footer a {
+    color: white;
+    text-decoration: none;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Style the recent activities section */
+div.recent-activities {
+    margin-left: 270px;
+    /* Adjust as needed to align with your layout */
+    margin-top: 30px;
+    /* Space from the top */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-radius: 8px;
+}
+
+div.recent-activities h2 {
+    font-size: 20px;
+    color: #333;
+}
+
+div.recent-activities ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+div.recent-activities li {
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #fff;
+}
+
+/* Optional: Add a subtle shadow to the recent activities box */
+div.recent-activities {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}

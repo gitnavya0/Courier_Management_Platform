@@ -118,6 +118,7 @@ CREATE TABLE `sends` (
   `recv_addr` varchar(50) NOT NULL,
   `recv_name` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 insert into sends values(1,'1232 Prestige Falcon', 'Naitik');
 -- --------------------------------------------------------
 
@@ -131,6 +132,65 @@ CREATE TABLE `staff` (
   `emp_phone` int(10) DEFAULT NULL,
   `emp_branch_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+CREATE TABLE count_table (
+    entity_name VARCHAR(50) PRIMARY KEY,
+    count_value INT
+); ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--new table to keep count of each table  
+INSERT INTO count_table (entity_name, count_value) VALUES
+    ('branch', 0),
+    ('staff', 0),
+    ('parcels', 0);
+
+--setting initial value to count of each table 
+UPDATE count_table
+SET count_value = (SELECT COUNT(*) FROM branch)
+WHERE entity_name = 'branch';
+
+UPDATE count_table
+SET count_value = (SELECT COUNT(*) FROM staff)
+WHERE entity_name = 'staff';
+
+UPDATE count_table
+SET count_value = (SELECT COUNT(*) FROM parcels)
+WHERE entity_name = 'parcels';
+
+--triggers to update count value in count_table when a new entry is added 
+DELIMITER //
+CREATE TRIGGER after_insert_branch
+AFTER INSERT ON branch
+FOR EACH ROW
+BEGIN
+    UPDATE count_table SET count_value = (SELECT COUNT(*) FROM branch) WHERE entity_name = 'branch';
+END;
+//
+
+CREATE TRIGGER after_insert_staff
+AFTER INSERT ON staff
+FOR EACH ROW
+BEGIN
+    UPDATE count_table SET count_value = (SELECT COUNT(*) FROM staff) WHERE entity_name = 'staff';
+END;
+//
+
+CREATE TRIGGER after_insert_parcels
+AFTER INSERT ON parcels
+FOR EACH ROW
+BEGIN
+    UPDATE count_table SET count_value = (SELECT COUNT(*) FROM parcels) WHERE entity_name = 'parcels';
+END;
+//
+DELIMITER ;
+
+--created table to log activity 
+CREATE TABLE activity_log (
+    activity_id INT AUTO_INCREMENT PRIMARY KEY,
+    timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    activity_type VARCHAR(255),
+    details TEXT
+);
 
 --
 -- Indexes for dumped tables

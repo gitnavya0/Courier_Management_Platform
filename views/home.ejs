@@ -29,33 +29,49 @@
             <a href="/addnew_parcel">Add new</a>
             <a href="/list_parcels">List all</a>
         </div>
-        <a href="#">Report</a>
     </div>
 
-    <table>
-        <tr>
-            <th>BRANCHES</th>
-        </tr>
-        <tr>
-            <td><%= branchCount %></td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <th>STAFF</th>
-        </tr>
-        <tr>
-            <td><%= staffCount%></td>
-        </tr>
-    </table>
-    <table>
-        <tr>
-            <th>TOTAL PARCELS</th>
-        </tr>
-        <tr>
-            <td><%= parcelCount%></td>
-        </tr>
-    </table>
+    <!-- Display count_table values -->
+<table>
+    <tr>
+        <th>BRANCHES</th>
+    </tr>
+    <tr>
+        <td><%= counts.branch %></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>STAFF</th>
+    </tr>
+    <tr>
+        <td><%= counts.staff %></td>
+    </tr>
+</table>
+<table>
+    <tr>
+        <th>TOTAL PARCELS</th>
+    </tr>
+    <tr>
+        <td><%= counts.parcels %></td>
+    </tr>
+</table>
+
+<div class="recent-activities">
+    <h2>Recent Activities</h2>
+    <ul>
+        <% recentActivities.forEach(activity => { %>
+            <li><%= activity.activity_type %>: <%= activity.details %></li>
+        <% }); %>
+    </ul>
+</div>
+
+
+<footer>
+    <p>&copy; 2023 CMS. All rights reserved.</p>
+    <p>Find us on <a href="https://github.com/gitnavya0/Courier_management_platform" target="_blank">GitHub</a></p>
+</footer>
+
 </body>
 <script>
 
