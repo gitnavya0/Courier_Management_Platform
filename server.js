@@ -265,7 +265,6 @@ app.post('/addnew_parcel', async (req, res) => {
     try {
         const formData = req.body;
 
-        // Step 2: Insert data into the sender table
         const insertSenderQuery = `INSERT INTO sender (sender_name, sender_addr) VALUES (?, ?)`;
         const senderValues = [formData.senderName, formData.senderAddress];
 
@@ -276,18 +275,16 @@ app.post('/addnew_parcel', async (req, res) => {
                 return;
             }
 
-            // Insert data into receiver table 
             const insertRecvQuery = `INSERT INTO receiver (recv_name, recv_addr) VALUES (?, ?)`;
             const recvValues = [formData.receiverName, formData.receiverAddress];
 
-            connection.query(insertRecvQuery, recvValues, (err, receiverResult) => {
+            connection.query(insertRecvQuery, recvValues, (err) => {
                 if (err) {
                     console.error(err);
                     res.status(500).send('An error occurred while adding the parcel after adding receiver details.');
                     return;
                 }
 
-                // Fetch sender_id from the sender table
                 const senderId = senderResult.insertId;
                 const recvName = formData.receiverName;
                 const recvAddr = formData.receiverAddress;
@@ -302,7 +299,6 @@ app.post('/addnew_parcel', async (req, res) => {
                         return;
                     }
 
-                    // Fetch emp_id from the staff table
                     const getEmployeeIdsQuery = 'SELECT emp_id FROM staff';
                     connection.query(getEmployeeIdsQuery, (err, employeeIds) => {
                         if (err) {
@@ -311,71 +307,83 @@ app.post('/addnew_parcel', async (req, res) => {
                             return;
                         }
 
-                        // Select a random emp_id from the list of available emp_id values
                         const randomEmpId = employeeIds[Math.floor(Math.random() * employeeIds.length)].emp_id;
 
-                        // Insert data into the parcels table with date, status, and emp_id
                         const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
-                        const statusOptions = ['accepted', 'shipped', 'intransit', 'out for delivery', 'delivered'];
+                        const statusOption = 'accepted';
 
-                        const insertParcelsQuery = `
-                            INSERT INTO parcels (cost, sender_id, recv_name, recv_addr, date_accepted, status, emp_id)
-                            VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                        const parcelWeight = formData.parcelWeight;
+                        const parcelLength = formData.parcelLength;
+                        const parcelWidth = formData.parcelWidth;
+                        const parcelType = formData.parcelType;
+                        const parcelHeight = formData.parcelHeight;
 
-                        const parcelsValues = [
-                            formData.parcelCost,
-                            senderId,
-                            formData.receiverName,
-                            formData.receiverAddress,
-                            currentDate,
-                            statusOptions[Math.floor(Math.random() * statusOptions.length)],
-                            randomEmpId
-                        ];
+                        const query = `SELECT calculateParcelCost(${parcelWeight}, ${parcelLength}, ${parcelWidth}, '${parcelType}', ${parcelHeight}) AS parcelCost`;
 
-                        connection.query(insertParcelsQuery, parcelsValues, (err, parcelsResult) => {
-                            if (err) {
-                                console.error(err);
-                                res.status(500).send('An error occurred while adding the parcel in parcels table.');
-                                return;
-                            }
+                        connection.query(query, (error, results) => {
+                            if (error) {
+                                console.error('Error calculating parcel cost:', error);
+                            } else {
+                                const parcelCost = results[0].parcelCost;
 
-                            // Fetch parcel_id from the inserted parcel
-                            const parcelId = parcelsResult.insertId;
+                                const insertParcelsQuery = `
+                                    INSERT INTO parcels (cost, sender_id, recv_name, recv_addr, date_accepted, status, emp_id)
+                                    VALUES (?, ?, ?, ?, ?, ?, ?)`;
 
-                            // Insert data into the parcels_details table using the retrieved parcel_id
-                            const insertParcelsDetailsQuery = `
-                                INSERT INTO parcels_details (parcel_id, cost, weight, length, width, type, height)
-                                VALUES (?, ?, ?, ?, ?, ?, ?)`;
+                                const parcelsValues = [
+                                    parcelCost,
+                                    senderId,
+                                    formData.receiverName,
+                                    formData.receiverAddress,
+                                    currentDate,
+                                    statusOption,
+                                    randomEmpId
+                                ];
 
-                            const parcelsDetailsValues = [
-                                parcelId,
-                                formData.parcelCost,
-                                formData.parcelWeight,
-                                formData.parcelLength,
-                                formData.parcelWidth,
-                                formData.parcelType,
-                                formData.parcelHeight
-                            ];
-
-                            connection.query(insertParcelsDetailsQuery, parcelsDetailsValues, (err, parcelsDetailsResult) => {
-                                if (err) {
-                                    console.error(err);
-                                    res.status(500).send('An error occurred while adding details to the parcels_details table.');
-                                    return;
-                                }
-
-                                // Log the activity
-                                const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
-                                const activityValues = ['New Parcel Added', `New parcel added with ID: ${parcelsResult.insertId}`];
-
-                                connection.query(activitySql, activityValues, (activityErr) => {
-                                    if (activityErr) {
-                                        console.error('Error logging activity: ' + activityErr);
+                                connection.query(insertParcelsQuery, parcelsValues, (err, parcelsResult) => {
+                                    if (err) {
+                                        console.error(err);
+                                        res.status(500).send('An error occurred while adding the parcel in parcels table.');
+                                        return;
                                     }
 
-                                    res.redirect('/home');
-                                });
-                            });
+                                    const parcelId = parcelsResult.insertId;
+
+                                    const insertParcelsDetailsQuery = `
+                                        INSERT INTO parcels_details (parcel_id, cost, weight, length, width, type, height)
+                                        VALUES (?, ?, ?, ?, ?, ?, ?)`;
+
+                                    const parcelsDetailsValues = [
+                                        parcelId,
+                                        parcelCost,
+                                        parcelWeight,
+                                        parcelLength,
+                                        parcelWidth,
+                                        parcelType,
+                                        parcelHeight
+                                    ];
+
+                                    connection.query(insertParcelsDetailsQuery, parcelsDetailsValues, (err, parcelsDetailsResult) => {
+                                        if (err) {
+                                            console.error(err);
+                                            res.status(500).send('An error occurred while adding details to the parcels_details table.');
+                                            return;
+                                        }
+
+                                        const activitySql = 'INSERT INTO activity_log (activity_type, details) VALUES (?, ?)';
+                                        const activityValues = ['New Parcel Added', `New parcel added with ID: ${parcelsResult.insertId}`];
+
+                                        connection.query(activitySql, activityValues, (activityErr) => {
+                                            if (activityErr) {
+                                                console.error('Error logging activity: ' + activityErr);
+                                            }
+
+                                            res.redirect('/home');
+                                        });
+                                    });
+                                }
+                                )
+                            };
                         });
                     });
                 });

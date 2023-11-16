@@ -43,10 +43,34 @@ INSERT INTO `branch` VALUES ('12A Gandhi Road', 'Mumbai', 9123456789),
 ('89J Jawahar Square', 'Lucknow', 9898989898);
 -- --------------------------------------------------------
 
+DELIMITER //
+CREATE PROCEDURE UpdateParcelStatus(IN parcelId INT)
+BEGIN
+  DECLARE currentStatus VARCHAR(20);
+
+  SELECT status INTO currentStatus FROM parcels WHERE parcel_id = parcelId;
+
+  IF currentStatus = 'accepted' THEN
+    UPDATE parcels SET status = 'shipped' WHERE parcel_id = parcelId;
+  ELSEIF currentStatus = 'shipped' THEN
+    UPDATE parcels SET status = 'intransit' WHERE parcel_id = parcelId;
+  ELSEIF currentStatus = 'intransit' THEN
+    UPDATE parcels SET status = 'out for delivery' WHERE parcel_id = parcelId;
+  ELSEIF currentStatus = 'out for delivery' THEN
+    UPDATE parcels SET status = 'delivered' WHERE parcel_id = parcelId;
+  ELSE
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Invalid parcel status';
+  END IF;
+END //
+DELIMITER ;
+
+SELECT staff.emp_id, staff.emp_name, staff.emp_phone, staff.emp_branch_id, branch.branch_addr
+FROM staff
+INNER JOIN branch ON staff.emp_branch_id = branch.branch_id;
 --
 -- Table structure for table `parcels`
 --
-
 CREATE TABLE `parcels` (
   `parcel_id` int NOT NULL AUTO_INCREMENT,
   `cost` int(11) DEFAULT NULL,
@@ -59,6 +83,36 @@ CREATE TABLE `parcels` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 insert into parcels values(1, 345, 1, 'Naitik', '1232 Prestige Falcon', '2023-11-11 00:00:00', 'in-transit', 4);
 -- --------------------------------------------------------
+
+--using a function to calculate the cost of the parcel 
+DELIMITER //
+
+CREATE FUNCTION calculateParcelCost(
+    p_weight DECIMAL(10,2),
+    p_length DECIMAL(10,2),
+    p_width DECIMAL(10,2),
+    p_type VARCHAR(255),
+    p_height DECIMAL(10,2)
+)
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE cost DECIMAL(10,2);
+
+    SET cost = p_weight * 10 + p_length * 12 + p_width * 17 + p_height * 15;
+
+    IF p_type = 'fragile' THEN
+        SET cost = cost + 200;
+    ELSE
+        SET cost = cost + 100;
+    END IF;
+
+    RETURN cost;
+END //
+
+DELIMITER ;
+
+--view of table that the customer sees 
 CREATE VIEW customer_parcel_view AS
 SELECT
     p.parcel_id,
@@ -69,6 +123,24 @@ SELECT
     p.status
 FROM parcels p
 JOIN parcels_details pd ON p.parcel_id = pd.parcel_id;
+
+--displaying parcel table in list_parcels.ejs
+SELECT
+    p.parcel_id,
+    pd.type,
+    p.cost,
+    s.sender_name AS sender_name,
+    r.recv_name AS receiver_name,
+    p.date_accepted,
+    p.status
+FROM
+    parcels AS p
+INNER JOIN
+    parcels_details AS pd ON p.cost = pd.cost
+INNER JOIN
+    sender AS s ON p.sender_id = s.sender_id
+INNER JOIN
+    receiver AS r ON p.recv_name = r.recv_name;
 
 --
 -- Table structure for table `parcels_details`
